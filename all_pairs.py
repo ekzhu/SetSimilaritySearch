@@ -64,17 +64,18 @@ def _all_pairs(sets, similarity_func, position_filter_func,
             index[token].append((x1, j))
 
 def all_pairs(sets, similarity_func, position_filter_func,
-    similarity_threshold, out_file):
-    logging.info("Find all pairs with similarities >= {}...".format(
-        similarity_threshold))
-    count = 0
-    for x, y, size_x, size_y, sim in _all_pairs(sets, similarity_func,
-            position_filter_func, similarity_threshold):
-        out_file.write("{}, {}, {}, {}, {}\n".format(
-            x, y, size_x, size_y, sim))
-        count += 1
-    logging.info("{} pairs computed, output to {}.".format(
-        count, out_filename))
+    similarity_threshold, out_filename):
+    with open(args.output_pairs, "w") as f:
+        logging.info("Find all pairs with similarities >= {}...".format(
+            similarity_threshold))
+        count = 0
+        for x, y, size_x, size_y, sim in _all_pairs(sets, similarity_func,
+                position_filter_func, similarity_threshold):
+            f.write("{}, {}, {}, {}, {}\n".format(
+                x, y, size_x, size_y, sim))
+            count += 1
+        logging.info("{} pairs computed, output to {}.".format(
+            count, out_filename))
 
 _jaccard_overlap_threshold_func = lambda x, t: int(x * t)
 
@@ -134,6 +135,5 @@ if __name__ == "__main__":
     similarity_func = similarity_funcs[args.similarity_func]
     overlap_threshold_func = overlap_threshold_funcs[args.similarity_func]
     position_filter_func = position_filter_funcs[args.similarity_func]
-    with open(args.output_pairs, "w") as f:
-        all_pairs(sets, similarity_func, position_filter_func,
-                args.similarity_threshold, f)
+    all_pairs(sets, similarity_func, position_filter_func,
+            args.similarity_threshold, args.output_pairs)
