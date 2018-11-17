@@ -72,5 +72,5 @@ similarity threshold 0.5.
 
 | Dataset | Input Sets | Output Pairs | Runtime | Note |
 |---------|--------------|--------------|---------|------|
-| [Pokec social network (relationships)](https://snap.stanford.edu/data/soc-Pokec.html) | 1432693 | 355215 | 16m2s | Each from-node is a set; each to-node is a token |
-| [LiveJournal](https://snap.stanford.edu/data/soc-LiveJournal1.html) | 4308452 |  |  | Each from node is a set; each to-node is a token |
+| [Pokec social network (relationships)](https://snap.stanford.edu/data/soc-Pokec.html) | 1432693 | 355215 | 10m49s | Each from-node is a set; each to-node is a token |
+| [LiveJournal](https://snap.stanford.edu/data/soc-LiveJournal1.html) | 4308452 | 5545706 | 28m51s | Each from node is a set; each to-node is a token |
