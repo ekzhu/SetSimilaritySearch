@@ -19,10 +19,8 @@ def read_sets(set_filename, reversed=False):
         tuples = [(x, y) for x, y in tuples]
     logging.info("{} tuples read.".format(len(tuples)))
     logging.info("Creating sets...")
-    sets = dict()
+    sets = defaultdict(list)
     for x, y in tuples:
-        if x not in sets:
-            sets[x] = []
         sets[x].append(y)
     logging.info("{} sets created.".format(len(sets)))
     return sets
@@ -44,42 +42,34 @@ def use_numpy_array_and_sort(sets):
     logging.info("Done using numpy array and sort sets.")
     return sets
 
-def indexing(sets, overlap_threshold_func, similarity_threshold):
-    logging.info("Building index with prefixes...")
-    index = defaultdict(lambda: deque([]))
-    for x in sets:
-        t = overlap_threshold_func(len(sets[x]), similarity_threshold)
-        prefix_size = len(sets[x]) - t + 1
-        for j, y in enumerate(sets[x][:prefix_size]):
-            index[y].append((x, j))
-    for y in index:
-        index[y] = sorted(list(index[y]))
-    logging.info("Done building index, {} tokens.".format(len(index)))
-    return index
-
-def _all_pairs(sets, index, similarity_func, position_filter_func,
+def _all_pairs(sets, similarity_func, position_filter_func,
         similarity_threshold):
-    pairs = set()
-    for y in sorted(index.keys()):
-        for ((x1, p1), (x2, p2)) in combinations(index[y], 2):
-            if (x1, x2) in pairs:
-                continue
-            pairs.add((x1, x2))
-            if not position_filter_func(sets[x1], sets[x2], p1, p2,
-                    similarity_threshold):
-                continue
+    index = defaultdict(list)
+    for x1 in sorted(sets.keys(), key=lambda x: len(sets[x])):
+        t = overlap_threshold_func(len(sets[x1]), similarity_threshold)
+        prefix_size = len(sets[x1]) - t + 1
+        prefix = sets[x1][:prefix_size]
+        # Find candidates using tokens in the prefix.
+        candidates = set([x2 for p1, token in enumerate(prefix)
+                for x2, p2 in index[token]
+                if position_filter_func(sets[x1], sets[x2], p1, p2,
+                    similarity_threshold)])
+        for x2 in candidates:
             sim = similarity_func(sets[x1], sets[x2])
             if sim < similarity_threshold:
                 continue
             yield (x1, x2, len(sets[x1]), len(sets[x2]), sim)
+        # Insert this set into index
+        for j, token in enumerate(prefix):
+            index[token].append((x1, j))
 
-def all_pairs(sets, index, similarity_func, position_filter_func,
+def all_pairs(sets, similarity_func, position_filter_func,
     similarity_threshold, out_file):
     logging.info("Find all pairs with similarities >= {}...".format(
         similarity_threshold))
     count = 0
-    for x, y, size_x, size_y, sim in _all_pairs(sets, index,
-            similarity_func, position_filter_func, similarity_threshold):
+    for x, y, size_x, size_y, sim in _all_pairs(sets, similarity_func,
+            position_filter_func, similarity_threshold):
         out_file.write("{}, {}, {}, {}, {}\n".format(
             x, y, size_x, size_y, sim))
         count += 1
@@ -143,8 +133,7 @@ if __name__ == "__main__":
     sets = use_numpy_array_and_sort(sets)
     similarity_func = similarity_funcs[args.similarity_func]
     overlap_threshold_func = overlap_threshold_funcs[args.similarity_func]
-    index = indexing(sets, overlap_threshold_func, args.similarity_threshold)
     position_filter_func = position_filter_funcs[args.similarity_func]
     with open(args.output_pairs, "w") as f:
-        all_pairs(sets, index, similarity_func, position_filter_func,
+        all_pairs(sets, similarity_func, position_filter_func,
                 args.similarity_threshold, f)
