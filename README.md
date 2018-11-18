@@ -127,9 +127,19 @@ all_pairs.py --input-sets testdata/example_input.txt \
 ## Benchmarks
 
 Run *All-Pairs* on 3.5 GHz Intel Core i7, using similarity function `jaccard` 
-and similarity threshold 0.5.
+and similarity threshold 0.5. 
+The running time of [`datasketch.MinHashLSH`](https://ekzhu.github.io/datasketch/lsh.html) is also shown below for 
+comparison (`num_perm=32`).
 
-| Dataset | Input Sets | Output Pairs | Runtime | Note |
-|---------|--------------|--------------|---------|------|
-| [Pokec social network (relationships)](https://snap.stanford.edu/data/soc-Pokec.html) | 1432693 | 355215 | 10m49s | Each from-node is a set; each to-node is a token |
-| [LiveJournal](https://snap.stanford.edu/data/soc-LiveJournal1.html) | 4308452 | 5545706 | 28m51s | Each from node is a set; each to-node is a token |
+| Dataset | Input Sets | Avg. Size | `SetSimilaritySearch` Runtime | `datasketch` Runtime | `datasketch` Accuracy |
+|---------|--------------|--------------|---------|------|--|
+| [Pokec social network (relationships)](https://snap.stanford.edu/data/soc-Pokec.html): from-nodes are set IDs; to-nodes are elements | 1432693 | 27.31 | 10m49s | 11m4s | Precision: 0.73; Recall: 0.67 |
+| [LiveJournal](https://snap.stanford.edu/data/soc-LiveJournal1.html): from-nodes are set IDs; to-nodes are elements | 4308452 | 16.01 | 28m51s | 31m58s | Precision: 0.79; Recall: 0.74|
+
+Although `datasketch.MinHashLSH` is an approximate algorithm, and I am using `num_perm=32` which is quite low, it is still 
+a bit slower than the exact algorithm `SetSimilaritySearch`. 
+The time for
+creating `datasketch.MinHash` is also included in the end-to-end time, while
+in practice this time can be saved through pre-computation. However, for 
+*ad hoc* computation of *All-Pairs*, `SetSimilaritySearch` is still
+the better choice, especially when sets are small and fit in memory.
