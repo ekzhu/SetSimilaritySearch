@@ -112,8 +112,8 @@ For example:
 3 e
 ```
 When one input file is given, it computes *All-Pairs*; when two input files 
-are given, it computes *Query* by building a search index on the larger 
-collection and querying with sets from the smaller collection -- effectively
+are given, it computes *Query* by building a search index on the first
+collection and querying with sets from the second collection -- effectively
 computes cross-collection pairs.
 
 Example usage (*All-Pairs*):
@@ -143,3 +143,25 @@ creating `datasketch.MinHash` is also included in the end-to-end time, while
 in practice this time can be saved through pre-computation. However, for 
 *ad hoc* computation of *All-Pairs*, `SetSimilaritySearch` is still
 the better choice, especially when sets are small and fit in memory.
+
+Run *Query* on 3.5 GHz Intel Core i7, using similarity function `jaccard` 
+and similarity threshold 0.5. 
+The query sets are sampled from the dataset itself.
+The running time of [`datasketch.MinHashLSH`](https://ekzhu.github.io/datasketch/lsh.html) is also shown below for 
+comparison (`num_perm=32`).
+
+| Dataset | Indexed Sets | Query Sets | Avg. Size | `SetSimilaritySearch` Indexing & Querying Time | `datasketch` Indexing & Querying Time | `datasketch` Accuracy |
+|--|--|--|--|--|--|--|
+| [Pokec social network (relationships)](https://snap.stanford.edu/data/soc-Pokec.html): from-nodes are set IDs; to-nodes are elements | 1432693 | 10k | 27.31 | Indexing: 1m7s; Querying (90pct): 2.3ms | Indexing: 9m23s; Querying (90pct): 0.72ms | Precision: 0.90; Recall: 0.88 |
+| [LiveJournal](https://snap.stanford.edu/data/soc-LiveJournal1.html): from-nodes are set IDs; to-nodes are elements | 4308452 | 10k | 16.01 | Indexing: 2m32s; Querying (90pct): 1.6ms | Indexing: 30m58s; Querying (90pct): 2.1ms | Precision: 0.85; Recall: 0.78|
+
+The indexing time for `datasketch.MinHashLSH`, including the time for 
+creating `datasketch.MinHash`, is much worse than `SetSimilaritySearch` --
+nearly 10x and 15x. Therefore `SetSimilaritySearch` is much better for 
+*ad hoc* computation of the *Query* problem. For the scenario in which the same 
+search index is reused for many *Query* problems, `datasketch.MinHashLSH` is 
+faster than `SetSimilaritySearch` when the set sizes are large. This is 
+easy to understand: the size of `datasketch.MinHash` is constant, wheres 
+a set can be arbitrarily large, so the query time for large sets is faster
+when sketch is used. However, when the set sizes become smaller, the sketch 
+looses its advantage.
