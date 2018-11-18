@@ -1,4 +1,4 @@
-# set-similarity-search
+# Set Similarity Search
 
 ## What is set similarity search?
 
@@ -33,8 +33,38 @@ This algorithm still runs in
 O(n^2) in the worst case, however, by taking advantage of skewness in empirical
 distributions of frequency, it often runs much faster.
 
-## Usage
+## Install
 
+```bash
+pip install -U SetSimilaritySearch
+```
+
+## Library usage
+
+You can import this package in your own Python code:
+
+```python
+from SetSimilaritySearch import all_pairs
+
+# The input sets must be a Python list of iterables (i.e., lists or sets)
+sets = [[1,2,3], [3,4,5], [2,3,4], [5,6,7]]
+# all_pairs returns an iterable of tuples.
+pairs = all_pairs(sets, similarity_func_name="jaccard", 
+        similarity_threshold=0.1)
+list(pairs)
+# [(1, 0, 0.2), (2, 0, 0.5), (2, 1, 0.5), (3, 1, 0.2)]
+# Each tuple is (<index of the first set>, <index of the second set>, <similarity>).
+# The indexes are the list indexes of the input sets.
+```
+
+Supported similarity functions (more to come):
+* [Jaccard](https://en.wikipedia.org/wiki/Jaccard_index): intersection size divided by union size; set `similarity_func_name="jaccard"`.
+* [Cosine](https://en.wikipedia.org/wiki/Cosine_similarity): intersection size divided by square root of the product of sizes; set `similarity_func_name="cosine"`.
+
+
+## Command line usage
+
+You can also use the command line program `all_pairs.py` on a file.
 The input must be a file with each line a **unique** `SetID Token` tuple. 
 For example:
 ```
@@ -54,20 +84,15 @@ For example:
 
 Example usage:
 ```bash
-./all_pairs.py --input-sets testdata/example_input.txt \
+all_pairs.py --input-sets testdata/example_input.txt \
     --output-pairs testdata/example_output.txt \
     --similarity-func jaccard \
     --similarity-threshold 0.5
 ```
 
-Supported similarity functions (more to come):
-* [Jaccard](https://en.wikipedia.org/wiki/Jaccard_index): intersection size divided by union size
-* [Cosine](https://en.wikipedia.org/wiki/Cosine_similarity): intersection size divided by square root of the product of sizes
-
-
 ## Benchmarks
 
-Running on 3.5 GHz Intel Core i7, using similarity function `jaccard` and 
+Run on 3.5 GHz Intel Core i7, using similarity function `jaccard` and 
 similarity threshold 0.5.
 
 | Dataset | Input Sets | Output Pairs | Runtime | Note |
