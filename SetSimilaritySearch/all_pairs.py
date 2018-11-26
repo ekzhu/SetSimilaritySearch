@@ -54,9 +54,10 @@ def all_pairs(sets, similarity_func_name="jaccard",
             sim = similarity_func(s1, s2)
             if sim < similarity_threshold:
                 continue
-            yield (x1, x2, sim)
+            # Output reverse-ordered set index pair (larger first).
+            yield tuple(sorted([x1, x2], reverse=True) + [sim,])
             count += 1
-        # Insert this prefix into index
+        # Insert this prefix into index.
         for j, token in enumerate(prefix):
             index[token].append((x1, j))
     logging.debug("{} pairs found.".format(count))
