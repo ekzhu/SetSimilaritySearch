@@ -6,6 +6,8 @@ _jaccard_overlap_threshold_func = lambda x, t: int(x * t)
 
 _cosine_overlap_threshold_func = lambda x, t: int(np.sqrt(x) * t)
 
+_containment_overlap_threshold_func = lambda x, t : int(x * t)
+
 def _jaccard_position_filter(s1, s2, p1, p2, t):
     l1, l2 = len(s1), len(s2)
     return float(min(l1-p1, l2-p2)) / float(max(l1, l2)) >= t
@@ -13,6 +15,10 @@ def _jaccard_position_filter(s1, s2, p1, p2, t):
 def _cosine_position_filter(s1, s2, p1, p2, t):
     l1, l2 = len(s1), len(s2)
     return float(min(l1-p1, l2-p2)) / np.sqrt(max(l1, l2)) >= t
+
+def _containment_position_filter(s1, s2, p1, p2, t):
+    l1, l2 = len(s1), len(s2)
+    return float(min(l1-p1, l2-p2)) / float(l1) >= t
 
 def _jaccard(s1, s2):
     i = len(np.intersect1d(s1, s2, assume_unique=True))
@@ -22,19 +28,26 @@ def _cosine(s1, s2):
     i = len(np.intersect1d(s1, s2, assume_unique=True))
     return float(i) / np.sqrt(float(len(s1)*len(s2)))
 
+def _containment(s1, s2):
+    i = len(np.intersect1d(s1, s2, assume_unique=True))
+    return float(i) / float(len(s1))
+
 _similarity_funcs = {
     "jaccard": _jaccard,
     "cosine": _cosine,
+    "containment": _containment,
 }
 
 _overlap_threshold_funcs = {
     "jaccard": _jaccard_overlap_threshold_func,
     "cosine": _cosine_overlap_threshold_func,
+    "containment": _containment_overlap_threshold_func,
 }
 
 _position_filter_funcs = {
     "jaccard": _jaccard_position_filter,
     "cosine": _cosine_position_filter,
+    "containment": _containment_position_filter,
 }
 
 def _frequency_order_transform(sets):

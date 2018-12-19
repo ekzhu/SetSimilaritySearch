@@ -132,6 +132,7 @@ results
 Supported similarity functions (more to come):
 * [Jaccard](https://en.wikipedia.org/wiki/Jaccard_index): intersection size divided by union size; set `similarity_func_name="jaccard"`.
 * [Cosine](https://en.wikipedia.org/wiki/Cosine_similarity): intersection size divided by square root of the product of sizes; set `similarity_func_name="cosine"`.
+* [Containment](https://ekzhu.github.io/datasketch/lshensemble.html#containment): intersection size divided by the size of the first set (or query set); set `similarity_func_name="containment"`.
 
 
 ## Command line usage
