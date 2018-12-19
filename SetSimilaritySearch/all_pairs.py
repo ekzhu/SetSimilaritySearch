@@ -3,7 +3,8 @@ from collections import defaultdict
 import numpy as np
 
 from SetSimilaritySearch.utils import _frequency_order_transform, \
-        _similarity_funcs, _overlap_threshold_funcs, _position_filter_funcs
+        _similarity_funcs, _overlap_threshold_funcs, _position_filter_funcs, \
+        _symmetric_similarity_funcs
 
 def all_pairs(sets, similarity_func_name="jaccard",
         similarity_threshold=0.5):
@@ -31,6 +32,9 @@ def all_pairs(sets, similarity_func_name="jaccard",
             similarity_func_name))
     if similarity_threshold < 0 or similarity_threshold > 1.0:
         raise ValueError("Similarity threshold must be in the range [0, 1].")
+    if similarity_func_name not in _symmetric_similarity_funcs:
+        raise ValueError("The similarity function must be symmetric "
+        "({})".format(", ".join(_symmetric_similarity_funcs)))
     similarity_func = _similarity_funcs[similarity_func_name]
     overlap_threshold_func = _overlap_threshold_funcs[similarity_func_name]
     position_filter_func = _position_filter_funcs[similarity_func_name]

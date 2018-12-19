@@ -2,11 +2,21 @@ import logging
 from collections import Counter
 import numpy as np
 
-_jaccard_overlap_threshold_func = lambda x, t: int(x * t)
+def _jaccard_overlap_threshold_func(x, t):
+    return int(x * t)
 
-_cosine_overlap_threshold_func = lambda x, t: int(np.sqrt(x) * t)
+_jaccard_overlap_index_threshold_func = _jaccard_overlap_threshold_func
 
-_containment_overlap_threshold_func = lambda x, t : int(x * t)
+def _cosine_overlap_threshold_func(x, t):
+    return int(np.sqrt(x) * t)
+
+_cosine_overlap_index_threshold_func = _cosine_overlap_threshold_func
+
+def _containment_overlap_threshold_func(x, t):
+    return int(x * t)
+
+def _containment_overlap_index_threshold_func(x, t):
+    return 1
 
 def _jaccard_position_filter(s1, s2, p1, p2, t):
     l1, l2 = len(s1), len(s2)
@@ -44,11 +54,20 @@ _overlap_threshold_funcs = {
     "containment": _containment_overlap_threshold_func,
 }
 
+_overlap_index_threshold_funcs = {
+    "jaccard": _jaccard_overlap_index_threshold_func,
+    "cosine": _cosine_overlap_index_threshold_func,
+    "containment": _containment_overlap_index_threshold_func,
+}
+
 _position_filter_funcs = {
     "jaccard": _jaccard_position_filter,
     "cosine": _cosine_position_filter,
     "containment": _containment_position_filter,
 }
+
+_symmetric_similarity_funcs = ["jaccard", "cosine"]
+_asymmetric_similarity_funcs = ["containment"]
 
 def _frequency_order_transform(sets):
     """Transform tokens to integers according to global frequency order.
