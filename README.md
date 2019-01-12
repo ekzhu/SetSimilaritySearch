@@ -1,5 +1,9 @@
 # Set Similarity Search
 
+Efficient set similarity search algorithms in Python. 
+For even better performance see the
+[Go Implementation](https://github.com/ekzhu/go-set-similarity-search).
+
 ## What is set similarity search?
 
 Let's say we have a database of users and the books they have read.
