@@ -1,5 +1,7 @@
 # Set Similarity Search
 
+[![Build Status](https://travis-ci.org/ekzhu/SetSimilaritySearch.svg?branch=master)](https://travis-ci.org/ekzhu/SetSimilaritySearch)
+
 Efficient set similarity search algorithms in Python. 
 For even better performance see the
 [Go Implementation](https://github.com/ekzhu/go-set-similarity-search).
