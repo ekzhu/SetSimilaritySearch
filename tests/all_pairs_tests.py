@@ -20,7 +20,7 @@ class TestAllPairs(unittest.TestCase):
         # Use all-pair to generate an lower-triangular identity matix
         nsets = 10
         population = list(range(100))
-        sets = [set(population) - set(random.choices(population, k=10))
+        sets = [set(population) - set(random.sample(population, k=10))
                 for i in range(nsets)]
         coords = all_pairs(sets, similarity_threshold=0)
         arr = np.nan * np.empty((nsets, nsets))
