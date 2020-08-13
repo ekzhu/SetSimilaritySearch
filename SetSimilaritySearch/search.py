@@ -1,6 +1,7 @@
 import logging
 from collections import defaultdict, deque
 import numpy as np
+from collections.abc import Iterable
 
 from SetSimilaritySearch.utils import _frequency_order_transform, \
         _similarity_funcs, _overlap_threshold_funcs, _position_filter_funcs, \
@@ -24,8 +25,8 @@ class SearchIndex(object):
 
     def __init__(self, sets, similarity_func_name="jaccard",
             similarity_threshold=0.5):
-        if not isinstance(sets, list) or len(sets) == 0:
-            raise ValueError("Input parameter sets must be a non-empty list.")
+        if not isinstance(sets, Iterable) or len(sets) == 0:
+            raise ValueError("Input parameter sets must be a non-empty iterable.")
         if similarity_func_name not in _similarity_funcs:
             raise ValueError("Similarity function {} is not supported.".format(
                 similarity_func_name))
@@ -89,4 +90,3 @@ class SearchIndex(object):
             results.append((i, sim))
         logging.debug("{} verified sets found.".format(len(results)))
         return list(results)
-
