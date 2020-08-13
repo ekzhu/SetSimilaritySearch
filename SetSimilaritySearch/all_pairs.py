@@ -27,7 +27,7 @@ def all_pairs(sets, similarity_func_name="jaccard",
             where `x` and `y` are the indices of sets in the input list `sets`.
     """
     if not isinstance(sets, Iterable) or len(sets) == 0:
-        raise ValueError("Input parameter sets must be a non-empty list.")
+        raise ValueError("Input parameter sets must be a non-empty iterable.")
     if similarity_func_name not in _similarity_funcs:
         raise ValueError("Similarity function {} is not supported.".format(
             similarity_func_name))

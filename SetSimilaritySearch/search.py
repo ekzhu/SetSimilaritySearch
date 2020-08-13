@@ -90,3 +90,4 @@ class SearchIndex(object):
             results.append((i, sim))
         logging.debug("{} verified sets found.".format(len(results)))
         return list(results)
+
