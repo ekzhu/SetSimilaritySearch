@@ -91,8 +91,13 @@ looses its advantage.
 
 ## Install
 
+### Pip
 ```bash
 pip install -U SetSimilaritySearch
+```
+### Conda
+```bash
+conda install -c conda-forge setsimilaritysearch
 ```
 
 ## Library usage
