@@ -13,8 +13,10 @@ class SearchIndex(object):
     techniques.
 
     Args:
-        sets (list): a list of sets, each entry is an iterable representing a
-            set.
+        sets (list or callable): a list of sets or a callable that returns an
+            iterator of sets. Each entry of the list or the returned iterator
+            is an iterable representing a set. Note that an iterator cannot
+            be accepted here because `sets` must be scaned twice.
         similarity_func_name (str): the name of the similarity function used;
             this function currently supports `"jaccard"`, `"cosine"`, and
             `"containment"`.
@@ -24,8 +26,6 @@ class SearchIndex(object):
 
     def __init__(self, sets, similarity_func_name="jaccard",
             similarity_threshold=0.5):
-        if not isinstance(sets, list) or len(sets) == 0:
-            raise ValueError("Input parameter sets must be a non-empty list.")
         if similarity_func_name not in _similarity_funcs:
             raise ValueError("Similarity function {} is not supported.".format(
                 similarity_func_name))
@@ -39,7 +39,7 @@ class SearchIndex(object):
         self.overlap_index_threshold_func = \
                 _overlap_index_threshold_funcs[similarity_func_name]
         self.position_filter_func = _position_filter_funcs[similarity_func_name]
-        logging.debug("Building SearchIndex on {} sets.".format(len(sets)))
+        logging.debug("Building SearchIndex...")
         logging.debug("Start frequency transform.")
         self.sets, self.order = _frequency_order_transform(sets)
         logging.debug("Finish frequency transform, {} tokens in total.".format(
@@ -50,7 +50,7 @@ class SearchIndex(object):
             prefix = self._get_prefix_index(s)
             for j, token in enumerate(prefix):
                 self.index[token].append((i, j))
-        logging.debug("Finished indexing sets.")
+        logging.debug("Finished indexing {} sets.".format(len(self.sets)))
 
     def _get_prefix_index(self, s):
         t = self.overlap_index_threshold_func(len(s), self.similarity_threshold)

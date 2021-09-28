@@ -14,8 +14,10 @@ def all_pairs(sets, similarity_func_name="jaccard",
     position filter enhancement.
 
     Args:
-        sets (list): a list of sets, each entry is an iterable representing a
-            set.
+        sets (list or callable): a list of sets or a callable that returns an
+            iterator of sets. Each entry of the list or the returned iterator
+            is an iterable representing a set. Note that an iterator cannot
+            be accepted here because `sets` must be scaned twice.
         similarity_func_name (str): the name of the similarity function used;
             this function currently supports `"jaccard"` and `"cosine"`.
         similarity_threshold (float): the threshold used, must be a float
@@ -23,10 +25,8 @@ def all_pairs(sets, similarity_func_name="jaccard",
 
     Returns:
         pairs (Iterator[tuple]): an iterator of tuples `(x, y, similarity)`
-            where `x` and `y` are the indices of sets in the input list `sets`.
+            where `x` and `y` are the indices of sets in the input `sets`.
     """
-    if not isinstance(sets, list) or len(sets) == 0:
-        raise ValueError("Input parameter sets must be a non-empty list.")
     if similarity_func_name not in _similarity_funcs:
         raise ValueError("Similarity function {} is not supported.".format(
             similarity_func_name))

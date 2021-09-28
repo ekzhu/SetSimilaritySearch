@@ -108,7 +108,8 @@ meet the similarity threshold.
 ```python
 from SetSimilaritySearch import all_pairs
 
-# The input sets must be a Python list of iterables (i.e., lists or sets).
+# The input sets must be a Python list of iterables (i.e., lists or sets)
+# or a callable (e.g. a function) that returns an iterator of such iterables.
 sets = [[1,2,3], [3,4,5], [2,3,4], [5,6,7]]
 # all_pairs returns an iterable of tuples.
 pairs = all_pairs(sets, similarity_func_name="jaccard", 
@@ -126,7 +127,8 @@ supports a static collection of sets with no updates.
 ```python
 from SetSimilaritySearch import SearchIndex
 
-# The input sets must be a Python list of iterables (i.e., lists or sets).
+# The input sets must be a Python list of iterables (i.e., lists or sets)
+# or a callable (e.g. a function) that returns an iterator of such iterables.
 sets = [[1,2,3], [3,4,5], [2,3,4], [5,6,7]]
 # The search index cannot be updated.
 index = SearchIndex(sets, similarity_func_name="jaccard", 

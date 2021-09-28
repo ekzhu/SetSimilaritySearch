@@ -96,8 +96,10 @@ def _frequency_order_transform(sets):
     in Data Cleaning" by Chaudhuri et al..
 
     Args:
-        sets (list): a list of sets, each entry is an iterable representing a
-            set.
+        sets (list or callable): a list of sets or a callable that returns an
+            iterator of sets. Each entry of the list or the returned iterator
+            is an iterable representing a set. Note that an iterator cannot
+            be accepted here because `sets` must be scaned twice.
 
     Returns:
         sets (list): a list of sets, each entry is a sorted Numpy array with
@@ -106,9 +108,16 @@ def _frequency_order_transform(sets):
             in the frequency order.
     """
     logging.debug("Applying frequency order transform on tokens...")
-    counts = reversed(Counter(token for s in sets for token in s).most_common())
+    if isinstance(sets, list):
+        get_sets = lambda : sets
+    elif callable(sets):
+        get_sets = sets
+    else:
+        raise ValueError("sets must be a list or a callable.")
+    counts = reversed(
+            Counter(token for s in get_sets() for token in s).most_common())
     order = dict((token, i) for i, (token, _) in enumerate(counts))
-    sets = [np.sort([order[token] for token in s]) for s in sets]
+    sets = [np.sort([order[token] for token in s]) for s in get_sets()]
     logging.debug("Done applying frequency order.")
     return sets, order
 
