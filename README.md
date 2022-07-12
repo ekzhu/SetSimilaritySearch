@@ -150,7 +150,7 @@ Supported similarity functions (more to come):
 
 You can also use the command line program `all_pairs.py`.
 The input must be **one or two** files with each line a **unique** `SetID Token` 
-tuple. 
+tuple. Multiple tokens can be provided per line and will be converted to tuples with the SetID.
 For example:
 ```
 # Line starts with # will be ignored.

@@ -16,13 +16,15 @@ def read_sets(set_filename, reversed=False, sample_k=0):
     logging.info("Reading set tuples from {} (reversed={})...".format(
         set_filename, reversed))
     with open(set_filename) as f:
-        tuples = [line.strip().split() for line in f
-                if not line.startswith("#")]
+        lines = [line.strip().split() for line in f
+                if not line.startswith("#") and len(line) > 0]
     # Make sure the tuples are (SetID, Token).
-    if reversed:
-        tuples = [(y, x) for x, y in tuples]
-    else:
-        tuples = [(x, y) for x, y in tuples]
+    tuples = []
+    for tuple in lines:
+        if len(tuple) == 1:
+            raise ValueError("Line encountered without minimum number of tokens: " + " ".join(tuple))
+        setid = tuple.pop(-1 if reversed else 0)
+        tuples.extend((setid, token) for token in tuple)
     logging.info("{} tuples read.".format(len(tuples)))
     logging.info("Creating sets...")
     sets = defaultdict(list)
