@@ -52,6 +52,8 @@ def cross_collection_all_pairs(indexed_set_IDs, query_set_IDs, indexed_sets,
     logging.info("Building search index on {} sets.".format(len(indexed_sets)))
     index = SearchIndex(indexed_sets, similarity_func_name=similarity_func_name,
             similarity_threshold=similarity_threshold)
+    tokens = (token for s in query_sets for token in s if token not in index.order)
+    index.order.update((token, -i) for i, token in enumerate(tokens, 1))
     logging.info("Finished building search index.")
     logging.info("Find pairs with similarity >= {}.".format(
         similarity_threshold))
