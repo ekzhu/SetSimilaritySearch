@@ -19,7 +19,9 @@ def all_pairs(sets, similarity_func_name="jaccard", similarity_threshold=0.5):
 
     Args:
         sets (list): a list of sets, each entry is an iterable representing a
-            set.
+            set. Note, it is the caller's responsibility to ensure the elements
+            in each set are unique, and duplicate elements will cause incorrect
+            output.
         similarity_func_name (str): the name of the similarity function used;
             this function currently supports `"jaccard"` and `"cosine"`.
         similarity_threshold (float): the threshold used, must be a float
