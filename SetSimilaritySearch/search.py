@@ -20,7 +20,9 @@ class SearchIndex(object):
 
     Args:
         sets (list): a list of sets, each entry is an iterable representing a
-            set.
+            set. Note, it is the caller's responsibility to ensure the elements
+            in each set are unique, and duplicate elements will cause incorrect
+            result.
         similarity_func_name (str): the name of the similarity function used;
             this function currently supports `"jaccard"`, `"cosine"`, and
             `"containment"`.
@@ -72,7 +74,7 @@ class SearchIndex(object):
         """Query the search index for sets similar to the query set.
 
         Args:
-            s (Iterable): the query set.
+            s (Iterable): the query set with unique elements.
 
         Returns (list): a list of tuples `(index, similarity)` where the index
             is the index of the matching sets in the original list of sets.
